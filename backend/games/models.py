@@ -29,7 +29,7 @@ class Game(models.Model):
     @property
     def is_won(self):
         return all(
-            character in self.guessed_letters for character in set(self.word)
+            character.lower() in self.guessed_letters.lower() for character in set(self.word)
         )
 
     @property
@@ -45,15 +45,16 @@ class Game(models.Model):
             return 'Lost'
 
         return 'InProgress'
-
+        
     @property
     def masked_word(self):
+        guessed = self.guessed_letters.lower()
+
         return ''.join(
-            character
-            if character in self.guessed_letters
-            else '_'
+            character if character.lower() in guessed else '_'
             for character in self.word
         )
+
 
     def __str__(self):
         return f'Game {self.pk} - {self.status}'

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 const API_URL = 'http://127.0.0.1:8000'
@@ -9,6 +9,7 @@ function App() {
   const [letter, setLetter] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const initialGameStarted = useRef(false)
 
   async function startNewGame() {
     setLoading(true)
@@ -44,6 +45,13 @@ function App() {
   }
 
   useEffect(() => {
+    // React StrictMode re-runs effects in development. This guard keeps the
+    // non-idempotent "create game" request from running twice.
+    if (initialGameStarted.current) {
+      return
+    }
+
+    initialGameStarted.current = true
     startNewGame()
   }, [])
 
